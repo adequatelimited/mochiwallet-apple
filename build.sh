@@ -496,7 +496,7 @@ xcodebuild \
     -configuration "$CONFIGURATION" \
     -destination "$DESTINATION" \
     -derivedDataPath build \
-    build 2>&1 | grep -E "^(Build|Compiling|Linking|error:|warning:|\*\*)" || true
+    build 2>&1 | tee /tmp/xcodebuild.log
 
 BUILD_RESULT=${PIPESTATUS[0]}
 
