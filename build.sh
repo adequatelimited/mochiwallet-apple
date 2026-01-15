@@ -496,6 +496,8 @@ xcodebuild \
     -configuration "$CONFIGURATION" \
     -destination "$DESTINATION" \
     -derivedDataPath build \
+    CODE_SIGNING_ALLOWED=NO \
+    CODE_SIGNING_REQUIRED=NO \
     build 2>&1 | tee /tmp/xcodebuild.log
 
 BUILD_RESULT=${PIPESTATUS[0]}
