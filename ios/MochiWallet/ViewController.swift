@@ -230,8 +230,8 @@ class ViewController: UIViewController {
     // MARK: - Cleanup
     
     deinit {
-        webView.removeObserver(self, forKeyPath: "estimatedProgress")
-        webView.configuration.userContentController.removeAllScriptMessageHandlers()
+        // Note: Observer and message handler cleanup handled automatically when view deallocates
+        // Accessing webView.configuration in deinit is not safe with strict concurrency
     }
 }
 
@@ -473,7 +473,7 @@ extension ViewController: WKScriptMessageHandler {
             return
         }
         
-        webView.evaluateJavaScript("window.iOSDeviceInfo = \(jsonString);") { [weak self] _, error in
+        webView.evaluateJavaScript("window.iOSDeviceInfo = \(jsonString);") { _, error in
             if let error = error {
                 logger.error("Failed to inject device info: \(error.localizedDescription)")
             }
