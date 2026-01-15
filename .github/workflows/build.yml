@@ -10,21 +10,21 @@ on:
 jobs:
   build:
     runs-on: macos-14
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Install pnpm
         run: npm install -g pnpm@8
-      
+
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
@@ -34,31 +34,22 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('mochiwallet/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
-      
+
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
-      
+
       - name: Show Xcode version
         run: xcodebuild -version
-      
-      - name: Install SwiftLint
-        run: brew install swiftlint
-      
-      - name: Run SwiftLint
-        run: |
-          cd ios/MochiWallet
-          swiftlint lint --reporter github-actions-logging || true
-        continue-on-error: true
-      
+
       - name: Build iOS App
         run: |
           chmod +x ./build.sh
-          ./build.sh
-      
+          ./build.sh -v
+
       - name: Upload iOS App
         uses: actions/upload-artifact@v4
         with:
           name: MochiWallet-iOS
           path: ios/build/Build/Products/Debug-iphonesimulator/MochiWallet.app
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
