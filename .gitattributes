@@ -1,0 +1,37 @@
+# Git Attributes for Mochimo Wallet iOS
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Swift files
+*.swift text diff=swift
+
+# Shell scripts must have LF endings
+*.sh text eol=lf
+
+# JavaScript and CSS
+*.js text
+*.css text
+
+# Markdown
+*.md text
+
+# XML/Plist files
+*.plist text
+*.storyboard text
+*.xcscheme text
+
+# JSON files
+*.json text
+
+# Xcode project files
+*.pbxproj text merge=union
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.app binary
+*.ipa binary

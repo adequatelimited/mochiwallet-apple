@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Privacy Manifest for Mochi Wallet iOS App
+  
+  This file declares the app's privacy practices as required by Apple App Store.
+  See: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+-->
+<plist version="1.0">
+<dict>
+    <!-- Tracking: This app does not track users -->
+    <key>NSPrivacyTracking</key>
+    <false/>
+    
+    <!-- Tracking Domains: None used -->
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+    
+    <!-- Required Reason APIs Used -->
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+        <!-- UserDefaults / localStorage API -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <!-- CA92.1: Access info from same app, per documentation -->
+                <string>CA92.1</string>
+            </array>
+        </dict>
+        <!-- System Boot Time API (used by WebKit) -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <!-- 35F9.1: Measure time elapsed between events in app -->
+                <string>35F9.1</string>
+            </array>
+        </dict>
+    </array>
+    
+    <!-- Data Collection: Types of data collected -->
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array>
+        <!-- No personal data is collected or transmitted to external servers -->
+        <!-- Wallet data is stored locally on device only -->
+    </array>
+</dict>
+</plist>
