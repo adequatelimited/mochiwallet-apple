@@ -405,7 +405,8 @@ TEMP_INDEX=$(mktemp)
 cp "$INDEX_PATH" "$TEMP_INDEX"
 
 # Remove require('buffer') line
-sed -i.bak "s|window\.Buffer = window\.Buffer || require(['\"]buffer['\"]).Buffer;||g" "$TEMP_INDEX"
+grep -v "window.Buffer.*require.*buffer" "$TEMP_INDEX" > "$TEMP_INDEX.new" && mv "$TEMP_INDEX.new" "$TEMP_INDEX"
+# OLD: sed -i.bak "s|window\.Buffer = window\.Buffer || require(['\"]buffer['\"]).Buffer;||g" "$TEMP_INDEX"
 
 # Fix absolute asset paths to relative paths for WKWebView
 sed -i.bak 's|src="/assets/|src="./assets/|g' "$TEMP_INDEX"
