@@ -1,0 +1,104 @@
+name: Build iOS App
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    permissions:
+      contents: write  # Required for uploading release assets
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        run: npm install -g pnpm@8
+
+      - name: Install GNU sed
+        run: |
+          brew install gnu-sed
+          echo "$(brew --prefix)/opt/gnu-sed/libexec/gnubin" >> $GITHUB_PATH
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            mochiwallet/node_modules
+          key: pnpm-store
+          restore-keys: pnpm-store
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build iOS App
+        id: build
+        run: |
+          chmod +x ./build.sh
+          ./build.sh -v
+
+      - name: Verify build
+        run: |
+          APP_PATH="ios/build/Build/Products/Debug-iphonesimulator/MochiWallet.app"
+          echo "=== App contents ==="
+          ls -la "$APP_PATH/"
+          echo ""
+          echo "=== Binary info ==="
+          file "$APP_PATH/MochiWallet"
+          lipo -info "$APP_PATH/MochiWallet"
+
+      - name: Create archive for Appetize
+        run: |
+          cd ios/build/Build/Products/Debug-iphonesimulator
+          # Use tar.gz format as recommended by Appetize for better compatibility
+          tar -czvf MochiWallet.tar.gz MochiWallet.app
+          ls -lh MochiWallet.tar.gz
+          # Also verify the archive contents
+          echo "=== Archive contents ==="
+          tar -tzvf MochiWallet.tar.gz | head -30
+
+      - name: Upload iOS App
+        uses: actions/upload-artifact@v4
+        with:
+          name: MochiWallet-iOS
+          path: ios/build/Build/Products/Debug-iphonesimulator/MochiWallet.app
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload to Appetize.io
+        id: appetize
+        uses: appetizeio/github-action-appetize@v1.0.5
+        with:
+          apiToken: ${{ secrets.APPETIZE_API_TOKEN }}
+          appFile: ios/build/Build/Products/Debug-iphonesimulator/MochiWallet.tar.gz
+          platform: ios
+          fileType: tar.gz
+
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ios/build/Build/Products/Debug-iphonesimulator/MochiWallet.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

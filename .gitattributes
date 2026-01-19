@@ -1,0 +1,52 @@
+# ===================
+# Line Endings
+# ===================
+# Auto detect text files and normalize line endings
+* text=auto
+
+# Shell scripts must use LF (Unix-style)
+*.sh text eol=lf
+
+# Batch files must use CRLF (Windows-style)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# ===================
+# Explicitly Declare Text Files
+# ===================
+*.md text diff=markdown
+*.txt text
+*.json text
+*.xml text
+*.plist text
+*.swift text diff=swift
+*.js text
+*.css text
+*.html text
+*.yml text
+*.yaml text
+
+# ===================
+# Binary Files (no diff, no merge)
+# ===================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.ipa binary
+*.p12 binary
+*.mobileprovision binary
+*.provisionprofile binary
+
+# ===================
+# Xcode Files
+# ===================
+*.pbxproj text -merge
+*.storyboard text
+*.xib text
+*.xcscheme text

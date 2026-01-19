@@ -1,0 +1,45 @@
+# Vite Configuration Patch - INFORMATIONAL ONLY
+# 
+# This patch file documents the change needed for iOS WKWebView compatibility.
+# The actual patching is performed automatically by build.sh via string replacement.
+# 
+# WHY THIS PATCH IS NEEDED:
+# Chrome extensions use absolute paths (base: '/') which resolve to the root filesystem.
+# iOS WKWebView loads assets from the app bundle so paths must be relative (base: './').
+# Without this change, all JS/CSS asset loads fail with 404 errors.
+#
+# HOW THE PATCH IS APPLIED:
+# The build.sh script applies this patch during step 3 using sed:
+#   sed -i.bak "s|base: '/'|base: './'|g" "$VITE_CONFIG_PATH"
+# This modifies mochiwallet/vite.config.ts before the extension is rebuilt.
+#
+# VALIDATION:
+# After running build.sh, verify the patch was applied correctly:
+#   1. Check mochiwallet/vite.config.ts contains: base: './'
+#   2. Check ios/MochiWallet/Resources/index.html uses relative paths:
+#      - src="./assets/..." instead of src="/assets/..."
+#      - href="./assets/..." instead of href="/assets/..."
+#   3. Run the app - if you see a blank white screen, the patch may not have applied
+#
+# TROUBLESHOOTING:
+# If assets fail to load (404 errors in Safari Web Inspector):
+#   1. Run: grep "base:" mochiwallet/vite.config.ts
+#      Should show: base: './'
+#   2. If it shows base: '/', the patch didn't apply. Try:
+#      - Delete mochiwallet/dist and rebuild: ./build.sh --clean
+#      - Manually edit mochiwallet/vite.config.ts
+#   3. Check index.html in Resources/ for absolute paths starting with /
+#
+# The diff below shows the exact change for reference:
+
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -29,7 +29,7 @@ export default defineConfig({
+     sourcemap: isDev,
+     emptyOutDir: true,
+   },
+-  base: '/',
++  base: './',
+   resolve: {
+     alias: {
+       '@': path.resolve(__dirname, './src'),

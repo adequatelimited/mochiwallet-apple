@@ -1,0 +1,2 @@
+# This file makes Git track the empty Resources directory
+# It will be populated by the build script
